@@ -15,7 +15,7 @@ const Item: React.FC<ItemProps> = ({ title, description, onChange }) => {
   };
 
   return (
-    <form className="item">
+    <div className="item">
       <h1>{title}</h1>
       <p>{description}</p>
       <div>
@@ -37,7 +37,7 @@ const Item: React.FC<ItemProps> = ({ title, description, onChange }) => {
           +
         </button>
       </div>
-    </form>
+    </div>
   );
 };
 

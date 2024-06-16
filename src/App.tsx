@@ -1,6 +1,7 @@
-import { useState, FormEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import './App.css';
 import Item from './components/Item';
+import Modal from './components/Modal';
 
 interface ItemQuantity {
   [title: string]: number;
@@ -31,6 +32,7 @@ const App: React.FC = () => {
     items.reduce((acc, item) => ({ ...acc, [item.title]: 0 }), {})
   );
   const [paymentMethod, setPaymentMethod] = useState<string>('Dinheiro');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleItemQuantityChange = (title: string, quantity: number) => {
     setItemQuantities((prevQuantities) => ({
@@ -45,22 +47,32 @@ const App: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsModalOpen(true);
+  };
+
+  const handleConfirm = () => {
     console.log(itemQuantities); // Get the quantity of each item here
-    console.log(paymentMethod); // Get the selected payment method here
+    console.log(paymentMethod);
+    setItemQuantities(
+      items.reduce((acc, item) => ({ ...acc, [item.title]: 0 }), {})
+    );
+    setIsModalOpen(false);
+  };
+
+  const handleEdit = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        {items.map((item, index) => {
-          return (
-            <Item
-              key={index}
-              title={item.title}
-              onChange={handleItemQuantityChange}
-            />
-          );
-        })}
+        {items.map((item, index) => (
+          <Item
+            key={index}
+            title={item.title}
+            onChange={handleItemQuantityChange}
+          />
+        ))}
         <select
           name="payment"
           id="payment"
@@ -72,6 +84,22 @@ const App: React.FC = () => {
         </select>
         <button type="submit">Revisar e Salvar</button>
       </form>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleEdit}
+        onConfirm={handleConfirm}
+      >
+        <h2>Resumo do pedido</h2>
+        <ul>
+          {Object.entries(itemQuantities).map(([title, quantity]) => (
+            <li key={title}>
+              {title}: {quantity}
+            </li>
+          ))}
+        </ul>
+        <p>Forma de pagamento: {paymentMethod}</p>
+      </Modal>
     </>
   );
 };
