@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import Item from './components/Item';
 import Modal from './components/Modal';
+import axios from 'axios';
 
 interface ItemQuantity {
   [title: string]: number;
@@ -9,6 +10,12 @@ interface ItemQuantity {
 interface ItemType {
   title: string;
   price: number;
+}
+
+interface FormDataInterface {
+  itemQuantities: ItemQuantity;
+  paymentMethod: string;
+  totalPrice: number;
 }
 
 const App: React.FC = () => {
@@ -20,8 +27,8 @@ const App: React.FC = () => {
     { title: 'Quentão', price: 2 },
     { title: 'Bolo', price: 7 },
     { title: 'Pé de moleque', price: 4 },
-    { title: 'Cachorro-quente', price: 5 },
-    { title: 'Chocolate-quente', price: 3 },
+    { title: 'Cachorro quente', price: 5 },
+    { title: 'Chocolate quente', price: 3 },
     { title: 'Canjica', price: 6 },
     { title: 'Pipoca', price: 2 },
     { title: 'Pescaria', price: 10 },
@@ -32,7 +39,7 @@ const App: React.FC = () => {
     { title: 'Pizza', price: 10 },
   ];
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataInterface>({
     itemQuantities: items.reduce(
       (acc, item) => ({ ...acc, [item.title]: 0 }),
       {} as ItemQuantity
@@ -80,11 +87,27 @@ const App: React.FC = () => {
     }
   };
 
-  const handleConfirm = () => {
-    console.log(formData);
-    console.log(formData.itemQuantities);
-    console.log(formData.paymentMethod);
-    console.log('Total Price:', formData.totalPrice);
+  const handleConfirm = async () => {
+    const data: { [key: string]: any } = {
+      paymentMethod: formData.paymentMethod,
+      totalPrice: formData.totalPrice,
+    };
+
+    // Add item quantities separately
+    Object.entries(formData.itemQuantities).forEach(([key, value]) => {
+      data[key] = value;
+    });
+
+    console.log(data);
+
+    const url2 =
+      'https://sheet.best/api/sheets/0bba196a-ceff-4a73-a51f-968ca6023b6d';
+
+    await axios
+      .post(url2, data)
+      .then((response) => console.log(response))
+      .catch((err) => console.log(err));
+
     setFormData({
       itemQuantities: items.reduce(
         (acc, item) => ({ ...acc, [item.title]: 0 }),
