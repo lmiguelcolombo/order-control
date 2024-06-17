@@ -49,13 +49,13 @@ const App: React.FC = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const calculateTotalPrice = () => {
-    let totalPrice = 0;
-    items.forEach((item) => {
-      totalPrice += item.price * formData.itemQuantities[item.title];
-    });
-    return totalPrice;
-  };
+  // const calculateTotalPrice = () => {
+  //   let totalPrice = 0;
+  //   items.forEach((item) => {
+  //     totalPrice += item.price * formData.itemQuantities[item.title];
+  //   });
+  //   return totalPrice;
+  // };
 
   const handleItemQuantityChange = (title: string, quantity: number) => {
     const updatedQuantities = {
