@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, MouseEvent } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import Item from './components/Item';
 import Modal from './components/Modal';
 import axios from 'axios';
@@ -88,6 +88,7 @@ const App: React.FC = () => {
   };
 
   const handleConfirm = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: { [key: string]: any } = {
       paymentMethod: formData.paymentMethod,
       totalPrice: formData.totalPrice,
@@ -131,7 +132,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-blue-100">
       <div className="flex-1 p-4">
-        <form onSubmit={handleSubmit} className="flex flex-wrap gap-4">
+        <form className="flex flex-wrap gap-4">
           {items.map((item, index) => (
             <Item
               key={index}
