@@ -38,48 +38,60 @@ const App: React.FC = () => {
       {} as ItemQuantity
     ),
     paymentMethod: 'Dinheiro',
+    totalPrice: 0,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const calculateTotalPrice = () => {
-    return items.reduce(
-      (total, item) => total + item.price * formData.itemQuantities[item.title],
-      0
-    );
+    let totalPrice = 0;
+    items.forEach((item) => {
+      totalPrice += item.price * formData.itemQuantities[item.title];
+    });
+    return totalPrice;
   };
 
   const handleItemQuantityChange = (title: string, quantity: number) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      itemQuantities: {
-        ...prevFormData.itemQuantities,
-        [title]: Math.max(0, quantity),
-      },
-    }));
+    const updatedQuantities = {
+      ...formData.itemQuantities,
+      [title]: Math.max(0, quantity),
+    };
+    const totalPrice = items.reduce(
+      (total, item) => total + item.price * updatedQuantities[item.title],
+      0
+    );
+    setFormData({
+      ...formData,
+      itemQuantities: updatedQuantities,
+      totalPrice: totalPrice,
+    });
   };
 
   const handlePaymentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    setFormData({
+      ...formData,
       paymentMethod: e.target.value,
-    }));
+    });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsModalOpen(true);
+    if (formData.totalPrice > 0) {
+      setIsModalOpen(true);
+    }
   };
 
   const handleConfirm = () => {
+    console.log(formData);
     console.log(formData.itemQuantities);
     console.log(formData.paymentMethod);
-    console.log('Total Price:', calculateTotalPrice());
+    console.log('Total Price:', formData.totalPrice);
     setFormData({
       itemQuantities: items.reduce(
         (acc, item) => ({ ...acc, [item.title]: 0 }),
         {} as ItemQuantity
       ),
       paymentMethod: 'Dinheiro',
+      totalPrice: 0,
     });
     setIsModalOpen(false);
   };
@@ -87,6 +99,11 @@ const App: React.FC = () => {
   const handleEdit = () => {
     setIsModalOpen(false);
   };
+
+  // Filter items to display only those with non-zero quantities in the modal
+  const displayedItems = items.filter(
+    (item) => formData.itemQuantities[item.title] > 0
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-blue-100">
@@ -118,12 +135,13 @@ const App: React.FC = () => {
       <div className="sticky bottom-0 p-4 bg-blue-200">
         <div className="max-w-screen-md mx-auto flex justify-between items-center">
           <div className="text-lg font-bold">
-            Total: R${calculateTotalPrice()}
+            Total: R${formData.totalPrice}
           </div>
           <button
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-200"
-            onClick={() => handleSubmit}
+            onClick={handleSubmit}
+            disabled={formData.totalPrice === 0}
           >
             Revisar e Salvar
           </button>
@@ -137,7 +155,7 @@ const App: React.FC = () => {
         <div className="p-4">
           <h2 className="text-xl font-bold mb-4">Resumo do pedido</h2>
           <ul>
-            {items.map((item, index) => (
+            {displayedItems.map((item, index) => (
               <li key={index} className="mb-2">
                 {item.title}: {formData.itemQuantities[item.title]}
               </li>
@@ -145,7 +163,7 @@ const App: React.FC = () => {
           </ul>
           <p className="mt-4">Forma de pagamento: {formData.paymentMethod}</p>
           <p className="mt-2 text-lg font-bold">
-            Total: R${calculateTotalPrice()}
+            Total: R${formData.totalPrice}
           </p>
         </div>
       </Modal>
