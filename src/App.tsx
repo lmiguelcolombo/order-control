@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, MouseEvent } from 'react';
 import Item from './components/Item';
 import Modal from './components/Modal';
 import axios from 'axios';
@@ -80,7 +80,7 @@ const App: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (formData.totalPrice > 0) {
       setIsModalOpen(true);
