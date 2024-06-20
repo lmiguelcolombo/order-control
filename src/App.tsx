@@ -35,8 +35,8 @@ const App: React.FC = () => {
     { title: 'Pescaria', price: 2 },
     { title: 'Argolas', price: 2 },
     { title: 'Cadeia', price: 2 },
-    { title: 'Água', price: 2 },
-    { title: 'Refri', price: 3 },
+    { title: 'Água', price: 3 },
+    { title: 'Refri', price: 5 },
     { title: 'Pizza', price: 5 },
   ];
 
