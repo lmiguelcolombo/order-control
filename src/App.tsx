@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, useEffect, MouseEvent } from 'react';
 import Item from './components/Item';
 import Modal from './components/Modal';
 import axios from 'axios';
@@ -16,6 +16,7 @@ interface FormDataInterface {
   itemQuantities: ItemQuantity;
   paymentMethod: string;
   totalPrice: number;
+  sender: string;
 }
 
 const App: React.FC = () => {
@@ -39,6 +40,11 @@ const App: React.FC = () => {
     { title: 'Pizza', price: 5 },
   ];
 
+  // Retrieve the stored sender value from local storage
+  const getStoredSender = () => {
+    return localStorage.getItem('sender') || 'Caixa 1';
+  };
+
   const [formData, setFormData] = useState<FormDataInterface>({
     itemQuantities: items.reduce(
       (acc, item) => ({ ...acc, [item.title]: 0 }),
@@ -46,16 +52,14 @@ const App: React.FC = () => {
     ),
     paymentMethod: 'Dinheiro',
     totalPrice: 0,
+    sender: getStoredSender(),
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const calculateTotalPrice = () => {
-  //   let totalPrice = 0;
-  //   items.forEach((item) => {
-  //     totalPrice += item.price * formData.itemQuantities[item.title];
-  //   });
-  //   return totalPrice;
-  // };
+  // Save sender to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('sender', formData.sender);
+  }, [formData.sender]);
 
   const handleItemQuantityChange = (title: string, quantity: number) => {
     const updatedQuantities = {
@@ -80,6 +84,13 @@ const App: React.FC = () => {
     });
   };
 
+  const handleSenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      sender: e.target.value,
+    });
+  };
+
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (formData.totalPrice > 0) {
@@ -88,13 +99,12 @@ const App: React.FC = () => {
   };
 
   const handleConfirm = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: { [key: string]: any } = {
       paymentMethod: formData.paymentMethod,
       totalPrice: formData.totalPrice,
+      sender: formData.sender,
     };
 
-    // Add item quantities separately
     Object.entries(formData.itemQuantities).forEach(([key, value]) => {
       data[key] = value;
     });
@@ -116,6 +126,7 @@ const App: React.FC = () => {
       ),
       paymentMethod: 'Dinheiro',
       totalPrice: 0,
+      sender: getStoredSender(),
     });
     setIsModalOpen(false);
   };
@@ -124,7 +135,6 @@ const App: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  // Filter items to display only those with non-zero quantities in the modal
   const displayedItems = items.filter(
     (item) => formData.itemQuantities[item.title] > 0
   );
@@ -133,6 +143,18 @@ const App: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-blue-100">
       <div className="flex-1 p-4">
         <form className="flex flex-wrap gap-4">
+          <div className="w-full mt-4">
+            <select
+              name="sender"
+              id="sender"
+              value={formData.sender}
+              onChange={handleSenderChange}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Caixa 1">Caixa 1</option>
+              <option value="Caixa 2">Caixa 2</option>
+            </select>
+          </div>
           {items.map((item, index) => (
             <Item
               key={index}
@@ -186,6 +208,7 @@ const App: React.FC = () => {
             ))}
           </ul>
           <p className="mt-4">Forma de pagamento: {formData.paymentMethod}</p>
+          <p className="mt-2">Enviado por: {formData.sender}</p>
           <p className="mt-2 text-lg font-bold">
             Total: R${formData.totalPrice}
           </p>
