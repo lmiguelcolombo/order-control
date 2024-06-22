@@ -37,7 +37,7 @@ const App: React.FC = () => {
     { title: 'Cadeia', price: 2 },
     { title: 'Água', price: 3 },
     { title: 'Refri', price: 5 },
-    { title: 'Pizza', price: 5 },
+    { title: 'Pizza', price: 6 },
   ];
 
   // Retrieve the stored sender value from local storage
