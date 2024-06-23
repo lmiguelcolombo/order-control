@@ -39,6 +39,7 @@ const App: React.FC = () => {
     { title: 'Refri', price: 5 },
     { title: 'Pizza', price: 6 },
     { title: 'Brinquedos', price: 2 },
+    { title: 'Chá**', price: 25 },
   ];
 
   // Retrieve the stored sender value from local storage
@@ -154,6 +155,7 @@ const App: React.FC = () => {
             >
               <option value="Caixa 1">Caixa 1</option>
               <option value="Caixa 2">Caixa 2</option>
+              <option value="Venda de chá">Venda de chá</option>
             </select>
           </div>
           {items.map((item, index) => (
