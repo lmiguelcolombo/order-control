@@ -23,7 +23,7 @@ const App: React.FC = () => {
   const items: ItemType[] = [
     { title: 'Pastel', price: 3 },
     { title: 'Enroladinho', price: 2 },
-    { title: 'Batata', price: 5 },
+    { title: 'Batata', price: 8 },
     { title: 'Pinhão', price: 4 },
     { title: 'Quentão', price: 5 },
     { title: 'Bolo', price: 2 },
